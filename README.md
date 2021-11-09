@@ -11,9 +11,8 @@
 ## 翻译
 ### 现代文到文言文翻译器
 * 可以去[🤗 模型主页](https://huggingface.co/raynardj/wenyanwen-chinese-translate-to-ancient)体验或下载这个模型。
-
 * 使用了这个[翻译句对的数据集](https://github.com/BangBOOM/Classical-Chinese)
-
+* 感兴趣的可以参考[训练的笔记](nbs/zh2cc_translate.ipynb)
 
 在python中推荐使用以下的代码进行inference：
 ```python
@@ -39,12 +38,13 @@ def inference(text):
             inputs.input_ids,
             attention_mask=inputs.attention_mask,
             num_beams=3,
+            max_length=128,
             bos_token_id=101,
             eos_token_id=tokenizer.sep_token_id,
             pad_token_id=tokenizer.pad_token_id,
         ), skip_special_tokens=True)
 ```
-
+#### 目前版本的案例
 目前版本， 按照上述通道的翻译案例：
 ```python
 >>> inference('你连一百块都不肯给我')
@@ -59,7 +59,7 @@ def inference(text):
 ['轻 我 行 ， 如 我 轻 来 ， 挥 袂 不 携 一 片 云 。']
 ```
 
-感兴趣的可以参考[训练的笔记](nbs/zh2cc_translate.ipynb),其中可改进处颇多。
+其中可改进处颇多:
 
 * [ ] 目前，模型最长语句是128，可以通过修改tokenizer的max_length参数来调整。也就是会忽略一些现代文的语句。
 * [ ] 可以通过去除pad token 的标签设置为-100，这样就不需要传eos token id了。
@@ -71,6 +71,8 @@ def inference(text):
 
 * 欢迎前往[🤗 文言文（古文）到现代文的翻译器模型主页](https://huggingface.co/raynardj/wenyanwen-ancient-translate-to-modern)
 * 训练语料是就是九十多万句句对， [数据集链接📚](https://github.com/BangBOOM/Classical-Chinese)。 训练时source序列（古文序列）， 按照50%的概率整句去除所有标点符号。
+* 感兴趣的可以参考[训练的笔记](nbs/cc2zh_translate.ipynb),其中可改进处颇多。
+
 #### 推荐的inference 通道
 **注意**
 * 你必须将```generate```函数的```eos_token_id```设置为102就可以翻译出完整的语句， 不然翻译完了会有残留的语句(因为做熵的时候用pad标签=-100导致)。
