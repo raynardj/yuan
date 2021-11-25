@@ -1,5 +1,5 @@
 # 渊
-> 渊 - A project for Classical Chinese
+> 渊 - AI+文言文一站式附庸风雅, 欢迎贡献新的思路 笔记 模型 数据
 
 一个文言诗词的NLP项目们。🌼
 
@@ -129,6 +129,9 @@ def inference(text):
 
 ## 断句
 > 输入一串未断句文言文， 可以断句， 目前支持二十多种标点符号
+
+* 训练好的模型[这里可以下](https://huggingface.co/raynardj/classical-chinese-punctuation-guwen-biaodian)
+* 使用了[【殆知阁v2.0数据集】](https://github.com/garychowcmu/daizhigev20)
 
 这里推荐的Inference函数如下
 
