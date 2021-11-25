@@ -7,6 +7,8 @@
     * [现代文到文言文翻译器](#现代文到文言文翻译器)
     * [文言文到现代文翻译器](#文言文到现代文翻译器)
 
+* [断句](#断句)
+
 
 ## 翻译
 ### 现代文到文言文翻译器
@@ -123,4 +125,34 @@ def inference(text):
 ['没 有 别 的 事 ， 只 是 手 熟 罢 了 。']
 >>> inference("此诚危急存亡之秋也")
 ['这 实 在 是 危 急 存 亡 的 时 候 。']
+```
+
+## 断句
+> 输入一串未断句文言文， 可以断句， 目前支持二十多种标点符号
+
+这里推荐的Inference函数如下
+
+```python
+from transformers import AutoTokenizer, BertForTokenClassification
+from transformers import pipeline
+
+TAG = "raynardj/classical-chinese-punctuation-guwen-biaodian"
+ner = pipeline("ner",module.model,tokenizer=tokenizer)
+
+model = BertForTokenClassification.from_pretrained(TAG)
+tokenizer = AutoTokenizer.from_pretrained(TAG)
+
+def mark_sentence(x: str):
+    outputs = ner(x)
+    x_list = list(x)
+    for i, output in enumerate(outputs):
+        x_list.insert(output['end']+i, output['entity'])
+    return "".join(x_list)
+```
+
+案例
+```python
+>>> mark_sentence("""郡邑置夫子庙于学以嵗时释奠盖自唐贞观以来未之或改我宋有天下因其制而损益之姑苏当浙右要区规模尤大更建炎戎马荡然无遗虽修学宫于荆榛瓦砾之余独殿宇未遑议也每春秋展礼于斋庐已则置不问殆为阙典今寳文阁直学士括苍梁公来牧之明年实绍兴十有一禩也二月上丁修祀既毕乃愓然自咎揖诸生而告之曰天子不以汝嘉为不肖俾再守兹土顾治民事神皆守之职惟是夫子之祀教化所基尤宜严且谨而拜跪荐祭之地卑陋乃尔其何以掲防妥灵汝嘉不敢避其责曩常去此弥年若有所负尚安得以罢輭自恕复累后人乎他日或克就绪愿与诸君落之于是谋之僚吏搜故府得遗材千枚取赢资以给其费鸠工庀役各举其任嵗月讫工民不与知像设礼器百用具修至于堂室廊序门牖垣墙皆一新之""")
+
+'郡邑，置夫子庙于学，以嵗时释奠。盖自唐贞观以来，未之或改。我宋有天下因其制而损益之。姑苏当浙右要区，规模尤大，更建炎戎马，荡然无遗。虽修学宫于荆榛瓦砾之余，独殿宇未遑议也。每春秋展礼于斋庐，已则置不问，殆为阙典。今寳文阁直学士括苍梁公来牧之。明年，实绍兴十有一禩也。二月，上丁修祀既毕，乃愓然自咎，揖诸生而告之曰"天子不以汝嘉为不肖，俾再守兹土，顾治民事，神皆守之职。惟是夫子之祀，教化所基，尤宜严且谨。而拜跪荐祭之地，卑陋乃尔。其何以掲防妥灵？汝嘉不敢避其责。曩常去此弥年，若有所负，尚安得以罢輭自恕，复累后人乎！他日或克就绪，愿与诸君落之。于是谋之，僚吏搜故府，得遗材千枚，取赢资以给其费。鸠工庀役，各举其任。嵗月讫，工民不与知像，设礼器，百用具修。至于堂室。廊序。门牖。垣墙，皆一新之。'
 ```
