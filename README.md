@@ -11,13 +11,72 @@
 
 ## 搜索
 ### 博古搜今
-* 用现代文语句模糊搜索文言文语句，可以去[🤗 模型主页](https://huggingface.co/raynardj/xlsearch-cross-lang-search-zh-vs-classicical-cn)
+* 用现代文语句模糊搜索文言文语句，可以去[🤗 模型主页](https://huggingface.co/raynardj/xlsearch-cross-lang-search-zh-vs-classicical-cn)下载模型
 
 您是不是经常遇到这样的问题：
 * 我不记得是谁， 哪个朝代，我只记得大概这么一个事儿，我就能模糊找到原文
 * 我不记得原文， 但是我只记得原文想表达的现代汉语意思， 希望能找出来引用一下。
 * 我在写文章， 有个观点， 我想碰运气看看古人有没有提过同样类似的说法。
 * 我只是想更有效率地阅读古文
+
+推荐的使用通道如下，当然， cosine距离搜索相关的框架和引擎很多， 大家自己看着适用的选
+
+装包
+```shell
+pip install -Uqq unpackai
+pip install -Uqq SentenceTransformer
+```
+
+搜索语句的函数
+```python
+from unpackai.interp import CosineSearch
+from sentence_transformers import SentenceTransformer
+import pandas as pd
+import numpy as np
+
+TAG = "raynardj/xlsearch-cross-lang-search-zh-vs-classicical-cn"
+encoder = SentenceTransformer(TAG)
+
+# all_lines is a list of all your sentences
+# all_lines 是一个你所有句子的列表， 可以是一本书， 按照句子分割， 也可以是很多很多书
+all_lines = ["句子1","句子2",...]
+vec = encoder.encode(all_lines, batch_size=32, show_progress_bar=True)
+
+# consine距离搜索器
+cosine = CosineSearch(vec)
+
+def search(text):
+    enc = encoder.encode(text) # encode the search key
+    order = cosine(enc) # distance array
+    sentence_df = pd.DataFrame({"sentence":np.array(all_lines)[order[:5]]})
+    return sentence_df
+```
+
+将史记打成句子以后， 搜索效果是这样的：
+
+```python
+>>> search("他是一个很慷慨的人")
+```
+```
+sentence
+0	季布者，楚人也。为气任侠，有名於楚。
+1	董仲舒为人廉直。
+2	大将军为人仁善退让，以和柔自媚於上，然天下未有称也。
+3	勃为人木彊敦厚，高帝以为可属大事。
+4	石奢者，楚昭王相也。坚直廉正，无所阿避。
+```
+
+```python
+>>> search("进入军营，必须缓缓牵着马骑")
+```
+```
+sentence
+0	壁门士吏谓从属车骑曰：将军约，军中不得驱驰。
+1	起之为将，与士卒最下者同衣食。卧不设席，行不骑乘，亲裹赢粮，与士卒分劳苦。
+2	既出，沛公留车骑，独骑一马，与樊哙等四人步从，从间道山下归走霸上军，而使张良谢项羽。
+3	顷之，上行出中渭桥，有一人从穚下走出，乘舆马惊。
+4	元狩四年春，上令大将军青、骠骑将军去病将各五万骑，步兵转者踵军数十万，而敢力战深入之士皆属骠骑。
+```
 
 ## 翻译
 ### 现代文到文言文翻译器
