@@ -2,6 +2,8 @@
 > 渊 - AI+文言文一站式附庸风雅, 欢迎贡献新的思路 笔记 模型 数据
 
 一个文言诗词的NLP项目们。🌼
+
+* [附帶翻譯引擎的所有古文在這裡開始閱讀](https://huggingface.co/spaces/raynardj/duguwen-classical-chinese-to-morden-translate)
 * [搜索: 博古搜今](#搜索)
 * [翻译](#翻译)
     * [现代文到文言文翻译器](#现代文到文言文翻译器)
